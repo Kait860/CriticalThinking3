@@ -1,29 +1,26 @@
 package criticalthinking3;
 
-import java.awt.Color;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.awt.TextArea;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-import javax.swing.JFrame;
+import java.util.Random;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 public class App extends Application {
     //initialize primary variables
-    private TextField display;
-    private JFrame frame;
-    private MenuItem menu1, menu2, menu3, menu4;
-    private MenuButton menuButton;
+    private TextArea display;
+    private Menu menu1, menu2, menu3, menu4;
+    private MenuBar menuBar;
     private HBox hbox;
     private Scene scene;
 
@@ -31,23 +28,23 @@ public class App extends Application {
     public void start(Stage stage) throws Exception {
         //Initializes menu
         stage.setTitle("User Interface Menu 1");
-        frame = new JFrame("Menu Selection");
-        frame.setSize(400,300);
-        menu1 = new MenuItem("Print Date & Time");
-        menu2 = new MenuItem("Write Contents to log.txt");
-        menu3 = new MenuItem("Make The Frame Green");
-        menu4 = new MenuItem("Close Menu");
+
+        menuBar = new MenuBar();
+        menu1 = new Menu("Print Date & Time");
+        menu2 = new Menu("Write Contents to log.txt");
+        menu3 = new Menu("Make The Frame Green");
+        menu4 = new Menu("Close Menu");
+
+        display = new TextArea();
         
         //first menu option will return the date and time
         menu1.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event){
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss a");
                 LocalDateTime now = LocalDateTime.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss a");
                 String dateTimeString = now.format(formatter);
-                display = new TextField(dateTimeString);
-                display.setVisible(true);
-                display.setEditable(false);
+                display.append(dateTimeString + "\n");
             }
         });
 
@@ -55,12 +52,12 @@ public class App extends Application {
         menu2.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event) {
-                PrintWriter out;
                 try {
-                    out = new PrintWriter("log.txt");
-                    out.println(display);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                    FileWriter out = new FileWriter("log.txt", true);
+                    out.write(display.getText());
+                    out.close();
+                } catch (IOException r) {
+                    r.printStackTrace();
                 }
             }
         });
@@ -69,9 +66,9 @@ public class App extends Application {
         menu3.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event){
-                float huePick = (float) Math.random();
-                Color colorPick = Color.getHSBColor(huePick, 1.0f,1.0f);
-                frame.getContentPane().setBackground(colorPick);
+                Random rand = new Random();
+                int g = rand.nextInt(256);
+                menuBar.setStyle(String.format("-fx-background-color: rgb(0,%d,0)", g));
             }
         });
 
@@ -84,8 +81,8 @@ public class App extends Application {
         });
 
         //creates the HBox and sets the scene/menu buttons
-        menuButton = new MenuButton("Make A Selection: ", null, menu1, menu2, menu3, menu4);
-        hbox = new HBox(menuButton);
+        menuBar.getMenus().addAll( menu1, menu2, menu3, menu4);
+        hbox = new HBox(menuBar);
         scene = new Scene (hbox,400,300);
         stage.setScene(scene);
         stage.show();
