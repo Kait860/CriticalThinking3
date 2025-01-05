@@ -86,13 +86,5 @@ public class App extends Application {
         scene = new Scene (hbox,400,300);
         stage.setScene(scene);
         stage.show();
-
-
     }
-
-    //launches the application
-    public static void main(String[] args) {
-        Application.launch(args);
-    }
-
 }
