@@ -1,6 +1,5 @@
 package criticalthinking3;
 
-import java.awt.TextArea;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -10,16 +9,20 @@ import java.util.Random;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 public class App extends Application {
     //initialize primary variables
     private TextArea display;
-    private Menu menu1, menu2, menu3, menu4;
+    private Menu mainMenu;
+    private MenuItem menu1, menu2, menu3, menu4;
     private MenuBar menuBar;
     private HBox hbox;
     private Scene scene;
@@ -30,10 +33,12 @@ public class App extends Application {
         stage.setTitle("User Interface Menu 1");
 
         menuBar = new MenuBar();
-        menu1 = new Menu("Print Date & Time");
-        menu2 = new Menu("Write Contents to log.txt");
-        menu3 = new Menu("Make The Frame Green");
-        menu4 = new Menu("Close Menu");
+        mainMenu = new Menu("Make a Selection ");
+        menu1 = new MenuItem("Print Date & Time");
+        menu2 = new MenuItem("Write Contents to log.txt");
+        menu3 = new MenuItem("Make The Frame Green");
+        menu4 = new MenuItem("Close Menu");
+        mainMenu.getItems().addAll(menu1, menu2, menu3, menu4);
 
         display = new TextArea();
         
@@ -44,7 +49,7 @@ public class App extends Application {
                 LocalDateTime now = LocalDateTime.now();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss a");
                 String dateTimeString = now.format(formatter);
-                display.append(dateTimeString + "\n");
+                display.appendText(dateTimeString + "\n");
             }
         });
 
@@ -62,7 +67,7 @@ public class App extends Application {
             }
         });
 
-        //third menu option will make the frame background color green
+        //third menu option will make the frame background for the option a random hue of the color green
         menu3.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event){
@@ -81,9 +86,11 @@ public class App extends Application {
         });
 
         //creates the HBox and sets the scene/menu buttons
-        menuBar.getMenus().addAll( menu1, menu2, menu3, menu4);
-        hbox = new HBox(menuBar);
-        scene = new Scene (hbox,400,300);
+        menuBar.getMenus().addAll( mainMenu);
+        hbox = new HBox(menuBar, display);
+        hbox.setAlignment(Pos.BASELINE_CENTER);
+        hbox.setSpacing(10);
+        scene = new Scene (hbox,700,300);
         stage.setScene(scene);
         stage.show();
     }
